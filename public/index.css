@@ -1,26 +1,29 @@
 body {
   margin: 0;
-  min-width: 100vw;
+  min-width: 100%;
   min-height: 100vh;
   display: flex;
-  font-family: 'Amarante', cursive;
+  font-family: "Amarante", cursive;
   color: white;
   background-color: rgb(50, 50, 50);
+  overflow: hidden;
 }
 
-a {
+a,
+nav form button {
   color: white;
   text-decoration: none;
 }
 
 nav,
-aside {
+nav form button {
   background-color: rgb(60, 60, 60);
 }
 
 nav {
   flex: 0 1 clamp(150px, 40vw, 450px);
   min-width: 150px;
+  height: 100vh;
 }
 
 nav header {
@@ -42,7 +45,8 @@ nav img {
   filter: brightness(0) invert(1);
 }
 
-nav ul {
+nav ul,
+nav form button {
   padding: 0;
   list-style: none;
   font-size: 1.6rem;
@@ -54,18 +58,30 @@ nav ul li {
   border-bottom: 1px solid white;
 }
 
-nav ul li a {
+nav ul li a,
+nav form button {
   display: block;
   padding: 16px;
 }
 
-nav ul li a {
+nav ul li a,
+nav form button {
   transition: all 0.1s ease-out;
 }
 
-nav ul li a:hover {
+nav ul li a:hover,
+nav form button:hover {
   color: rgb(86, 176, 255);
   text-underline-offset: 4px;
+}
+
+nav form button {
+  border: none;
+  border-bottom: 1px solid white;
+  cursor: pointer;
+  font-family: "Amarante", cursive;
+  width: 100%;
+  text-align: left;
 }
 
 main {
@@ -73,6 +89,28 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
+  height: 100vh;
+  scroll-behavior: smooth;
+  padding: 10px;
+}
+
+main::-webkit-scrollbar {
+  width: 10px;
+}
+
+main::-webkit-scrollbar-track {
+  background: rgb(50, 50, 50); /* track color */
+}
+
+main::-webkit-scrollbar-thumb {
+  background-color: rgb(86, 176, 255); /* scrollbar thumb */
+  border-radius: 10px;
+  border: 2px solid rgb(50, 50, 50); /* gives it a little padding feel */
+}
+
+main::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(113, 201, 255);
 }
 
 main .form-container h1 {
@@ -90,26 +128,29 @@ main .form-container a {
   color: rgb(86, 176, 255);
 }
 
-main form {
+main .form-container form {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
   width: clamp(200px, 40vw, 600px);
 }
 
-main form input,
-main form button {
+main .form-container form input,
+main .form-container form button,
+main .my-drive .header form input,
+main .my-drive .header form button {
   padding: 16px;
   font-size: 1.4rem;
 }
 
-main form input:focus {
+main form input:focus,
+main .my-drive .header form input:focus {
   outline: none;
   border: 2px solid #56b0ff;
   box-shadow: 0 0 8px rgba(86, 176, 255, 0.6);
 }
 
-main form .checkbox-container {
+main .form-container form .checkbox-container {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -117,13 +158,14 @@ main form .checkbox-container {
   padding: 10px 0;
 }
 
-.checkbox-container input[type='checkbox'] {
+.checkbox-container input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
 }
 
-main button {
+main .form-container button,
+main .my-drive .header form button {
   cursor: pointer;
   background-color: rgb(86, 176, 255);
   color: white;
@@ -134,24 +176,425 @@ main .signup-button {
   margin-top: 1.2rem;
 }
 
+main .about-container {
+  font-size: 1.4rem;
+}
+
+main .meinfo-container {
+  box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  margin-bottom: 3rem;
+}
+
+main .meinfo-container img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px 8px 0 0;
+}
+
+main .meinfo-container .text {
+  padding: 14px;
+}
+
+main .meinfo-container h2 {
+  margin-top: 10px;
+}
+
+main .meinfo-container a {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  transition: color 0.1s ease-out;
+  display: block;
+  text-align: center;
+  text-align: center;
+  background-color: rgb(60, 60, 60);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+main .meinfo-container a:hover {
+  color: rgb(86, 176, 255);
+}
+
+main .stack-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+
+main .stack-section article {
+  background-color: rgb(60, 60, 60);
+  padding: 10px;
+  border-radius: 8px;
+  color: rgb(255, 255, 255);
+}
+
+main .my-drive {
+  flex: 1;
+  width: 100%;
+}
+
+main .folders-container {
+  flex: 1;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+  width: 100%;
+  font-size: 1.4rem;
+}
+
+main .my-drive .header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3rem;
+}
+
+main .my-drive .header form {
+  width: clamp(200px, 40vw, 600px);
+}
+
+main .my-drive .header form input,
+main .my-drive .header form button {
+  border-radius: 8px;
+}
+
+main .my-drive .header form input {
+  width: 60%;
+  border: white 2px solid;
+}
+
+main .my-drive .header form button {
+  width: 10%;
+  transition: background-color 0.1s ease-out;
+}
+
+main .my-drive .header form button:hover {
+  background-color: rgb(97, 181, 255);
+}
+
+main .folders-container .folder {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  background-color: rgb(60, 60, 60);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+main .folders-container .folder .folder-title {
+  white-space: nowrap; /* keep the text in one line */
+  overflow: hidden; /* hide anything that overflows */
+  text-overflow: ellipsis; /* add ... at the end */
+  max-width: 160px; /* or whatever width you want */
+}
+
+main .folders-container .folder-link {
+  display: flex;
+  align-items: center;
+}
+
+main .folders-container .folder .drop-ico {
+  margin-left: auto;
+}
+
+main .folders-container img {
+  filter: brightness(0) invert(1);
+}
+
+.drop-ico-wrapper {
+  padding: 6px;
+  border-radius: 50%;
+  display: inline-flex;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.drop-ico-wrapper:hover {
+  background-color: rgb(50, 50, 50);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 40px;
+  right: -50%;
+  background-color: #333;
+  color: white;
+  border-radius: 4px;
+  min-width: 140px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 8px 0;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  transform: scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dropdown-menu:not(.hidden) {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dropdown-menu a,
+.dropdown-menu form button,
+.dropdown-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: white;
+  /* text-align: center; */
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu form button:hover,
+.dropdown-menu button:hover {
+  background-color: #444;
+}
+
+.dropdown-menu form button,
+.dropdown-menu button {
+  border: none;
+  font-size: 1.4rem;
+  width: 100%;
+  cursor: pointer;
+  background-color: #333;
+}
+
+.edit-form-container form input,
+.edit-form-container form button {
+  border-radius: 6px;
+  font-size: 0.8rem;
+  padding: 2px;
+}
+
+.edit-form-container form input {
+  border: white 2px solid;
+}
+
+.edit-form-container form button {
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.1s ease-out;
+}
+
+.edit-form-container form button:hover {
+  background-color: rgb(224, 224, 224);
+}
+
+.edit-form-container .form-buttons {
+  display: grid;
+  margin-top: 4px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  min-width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+main .files-container {
+  font-size: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  width: 100%;
+  height: 200px;
+}
+
+main .files-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 40%;
+}
+
+main .files-container label {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 1rem 2rem;
+  border-radius: 8px;
+
+  background-color: rgb(210, 210, 210);
+  color: black;
+
+  font-family: "Amarante", cursive;
+  font-size: 2rem;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.1s ease-out,
+    transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+/* Remove margin-right here because content is stacked vertically */
+main .files-container label img[alt="ico"] {
+  transition: transform 0.2s ease;
+  max-height: 1.5em;
+  max-width: 1.5em;
+  margin: 0; /* no side margin */
+}
+
+main .files-container label:hover {
+  background-color: white;
+}
+
+main .files-container label:hover img[alt="ico"] {
+  transform: scale(1.1);
+}
+
+main .files-container .submit-btn {
+  padding: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background-color: rgb(86, 176, 255);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  transition: background-color 0.1s ease-out;
+}
+
+main .files-container .submit-btn:hover {
+  background-color: rgb(100, 183, 255);
+}
+
+.data-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 8px;
+  font-size: 1.2rem;
+}
+
+.data-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background-color: rgb(60, 60, 60);
+  padding: 10px;
+  border-radius: 8px;
+  align-items: center;
+}
+
+.data-row.header {
+  font-weight: bold;
+  background-color: #333;
+}
+
+.data-row p,
+.data-row a,
+.data-row form button {
+  text-align: center;
+  transition: color 0.1s ease-out;
+}
+
+.data-row a:hover,
+.data-row form button:hover {
+  color: rgb(86, 176, 255);
+}
+
+.data-row form {
+  display: flex; /* or grid */
+  justify-content: center;
+  min-width: 100%;
+  height: 100%;
+}
+
+.data-row form button {
+  background-color: rgb(60, 60, 60);
+  font-family: "Amarante", cursive;
+  border: none;
+  cursor: pointer;
+  color: white;
+  transition: color 0.2s ease-out;
+  font-size: 1.2rem;
+}
+
 @media (max-width: 600px) {
   body {
     flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
   }
 
   nav {
-    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 10px;
+    height: 60px;
+    flex-shrink: 1;
+    width: 100%;
+    gap: 1.4rem;
   }
 
   nav header {
-    justify-content: center;
+    display: flex;
+    padding: 0;
+    margin: 0;
   }
 
-  nav header .h1 {
-    font-size: 2rem;
+  nav ul,
+  nav form button {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    /* overflow-x: auto; */
+    margin: 0;
+    padding: 0;
   }
 
-  nav ul li {
-    text-align: center;
+  nav ul li,
+  nav form button {
+    border: none;
+    background-color: rgb(50, 50, 50);
+    border-radius: 8px;
+  }
+
+  nav ul li a,
+  nav form button {
+    padding: 8px;
+    font-size: 1.2rem;
+    white-space: nowrap;
+  }
+
+  main {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  main .folders-container {
+    align-self: center;
+  }
+}
+
+@media (max-width: 400px) {
+  main .files-container {
+    font-size: 1rem;
+  }
+
+  main .files-container * {
+    font-size: 1rem;
   }
 }

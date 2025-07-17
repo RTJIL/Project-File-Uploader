@@ -13,7 +13,7 @@ passport.use(
       )
       console.log('----')
 
-      const user = await queries.findUnique({ username })
+      const user = await queries.findUnique("user", { username })
 
       if (!user) return done(null, false, { message: 'User not found' })
 
@@ -35,7 +35,7 @@ passport.serializeUser((user, done) => {
 })
 
 passport.deserializeUser(async (id, done) => {
-  const user = await queries.findUnique({ id })
+  const user = await queries.findUnique("user", { id })
   return done(null, user)
 })
 

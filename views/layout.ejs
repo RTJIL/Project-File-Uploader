@@ -25,13 +25,21 @@
         </a>
       </header>
       <ul>
+        <% if(!isAuthenticated) { %>
         <li><a href="/">🧾Sign in</a></li>
-        <!-- conditional rendering -->
+        <li></li>
         <li><a href="/sign-up">📝Sign up</a></li>
-        <!-- conditional rendering -->
+        <% } else { %>
+        <li><a href="/">💽My Drive</a></li>
+        <form action="/sign-out" method="POST">
+          <button type="submit">🚪Sign out</button>
+        </form>
+        <% } %>
         <li><a href="/about">ℹ️About</a></li>
       </ul>
     </nav>
     <main><%- body %></main>
+
+    <%- script %>
   </body>
 </html>

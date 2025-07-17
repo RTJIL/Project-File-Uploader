@@ -1,0 +1,48 @@
+<section class="files-container">
+  <h1 style="margin-bottom: 10px">Files</h1>
+
+  <form
+    id="uploadForm"
+    action="/<%= folderId %>/add-file"
+    method="POST"
+    enctype="multipart/form-data"
+  >
+    <input type="file" name="file" id="file" style="display: none" />
+
+    <label for="file" class="input-label">
+      <img src="upload.svg" alt="ico" />
+      <div id="fileName">Upload file</div>
+    </label>
+
+    <button type="submit" class="submit-btn">Submit file</button>
+  </form>
+
+  <div class="data-container">
+    <!-- Header row -->
+    <div class="data-row header">
+      <p>File Name</p>
+      <p>Size</p>
+      <p>Upload Time</p>
+      <p>Download</p>
+      <p>Remove</p>
+    </div>
+
+    <% files.forEach(file => { %>
+    <div class="data-row">
+      <p><%= file.title %></p>
+      <p><%= formatFileSize(file.size) %></p>
+      <p><%= formatDate(file.uploadTime) %></p>
+      <a href="/<%= file.id %>/install">⬇️ Download</a>
+      <!-- <a> -->
+      <form action="/<%= folderId %>/<%= file.id %>/delete" method="POST">
+        <button type="submit">🪣Remove</button>
+      </form>
+      <!-- </a> -->
+    </div>
+    <% }); %>
+  </div>
+</section>
+<% script = `
+<script src="/js/preventIntall.js" defer></script>
+` %>
+<script src="/js/fileExt.js"></script>

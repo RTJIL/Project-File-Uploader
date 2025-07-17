@@ -1,1 +1,69 @@
-<p>My drive</p>
+<div class="my-drive">
+  <div class="header">
+    <h1>My Drive</h1>
+    <form action="/add-folder" method="POST">
+      <label for="title">
+        <input
+          type="text"
+          id="title"
+          name="title"
+          placeholder="Enter folder name"
+          required
+          autocomplete="off"
+        />
+      </label>
+      <button type="submit">+</button>
+    </form>
+  </div>
+
+  <section class="folders-container">
+    <% folders.forEach(folder => { %>
+    <div class="folder">
+      <!-- Folder link area -->
+      <a href="/<%= folder.id %>" class="folder-link">
+        <img src="folder.png" alt="folder-ico" style="width: 24px" />
+        <h4
+          style="margin: 10px"
+          class="folder-title"
+          data-id="<%= folder.id %>"
+          data-title="<%= folder.title %>"
+        >
+          <%= folder.title %>
+        </h4>
+      </a>
+      <div class="edit-form-container"></div>
+
+      <!-- Dropdown trigger and menu -->
+      <div class="dropdown" style="position: relative">
+        <div class="drop-ico-wrapper" onclick="toggleDropdown(this)">
+          <img
+            src="dots.png"
+            alt="drop-ico"
+            class="drop-ico"
+            style="width: 24px; cursor: pointer"
+          />
+        </div>
+
+        <div class="dropdown-menu hidden">
+          <button onclick="edit(this)">
+            <div class="txt">Edit</div>
+            <div class="emoji">✏️</div>
+          </button>
+          <form action="/delete-folder/<%= folder.id %>" method="POST">
+            <button type="submit">
+              <div class="txt">Delete</div>
+              <div class="emoji">🗑</div>
+            </button>
+          </form>
+          <a href="/share/<%= folder.id %>">
+            <div class="txt">Share</div>
+            <div class="emoji">🔗</div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <% }); %>
+  </section>
+</div>
+<script src="/js/dropdown.js"></script>
+<script src="/js/edit.js"></script>
