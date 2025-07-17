@@ -1,0 +1,157 @@
+body {
+  margin: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  font-family: 'Amarante', cursive;
+  color: white;
+  background-color: rgb(50, 50, 50);
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+nav,
+aside {
+  background-color: rgb(60, 60, 60);
+}
+
+nav {
+  flex: 0 1 clamp(150px, 40vw, 450px);
+  min-width: 150px;
+}
+
+nav header {
+  padding: 2rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+nav header .h1 {
+  font-size: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  cursor: pointer;
+  padding: 2px;
+}
+
+nav img {
+  filter: brightness(0) invert(1);
+}
+
+nav ul {
+  padding: 0;
+  list-style: none;
+  font-size: 1.6rem;
+  display: flex;
+  flex-direction: column;
+}
+
+nav ul li {
+  border-bottom: 1px solid white;
+}
+
+nav ul li a {
+  display: block;
+  padding: 16px;
+}
+
+nav ul li a {
+  transition: all 0.1s ease-out;
+}
+
+nav ul li a:hover {
+  color: rgb(86, 176, 255);
+  text-underline-offset: 4px;
+}
+
+main {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+main .form-container h1 {
+  margin: 3rem 0 0 0;
+}
+
+main .form-container p {
+  margin: 0;
+  padding-bottom: 2rem;
+}
+
+main .form-container a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: rgb(86, 176, 255);
+}
+
+main form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: clamp(200px, 40vw, 600px);
+}
+
+main form input,
+main form button {
+  padding: 16px;
+  font-size: 1.4rem;
+}
+
+main form input:focus {
+  outline: none;
+  border: 2px solid #56b0ff;
+  box-shadow: 0 0 8px rgba(86, 176, 255, 0.6);
+}
+
+main form .checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.2rem;
+  padding: 10px 0;
+}
+
+.checkbox-container input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+main button {
+  cursor: pointer;
+  background-color: rgb(86, 176, 255);
+  color: white;
+  border: none;
+}
+
+main .signup-button {
+  margin-top: 1.2rem;
+}
+
+@media (max-width: 600px) {
+  body {
+    flex-direction: column;
+  }
+
+  nav {
+    min-width: 100px;
+  }
+
+  nav header {
+    justify-content: center;
+  }
+
+  nav header .h1 {
+    font-size: 2rem;
+  }
+
+  nav ul li {
+    text-align: center;
+  }
+}

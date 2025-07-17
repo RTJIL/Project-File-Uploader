@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amarante&family=Space+Grotesk:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav>
+      <header>
+        <a href="/" class="h1">
+          <img
+            src="hard-drive.png"
+            alt="icon"
+            style="width: 60px"
+            class="header-img"
+          />Cloud
+        </a>
+      </header>
+      <ul>
+        <li><a href="/">🧾Sign in</a></li>
+        <!-- conditional rendering -->
+        <li><a href="/sign-up">📝Sign up</a></li>
+        <!-- conditional rendering -->
+        <li><a href="/about">ℹ️About</a></li>
+      </ul>
+    </nav>
+    <main><%- body %></main>
+  </body>
+</html>

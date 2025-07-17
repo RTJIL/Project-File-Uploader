@@ -1,0 +1,8 @@
+<% if (!isAuthenticated) { %>
+<%- include('forms/sign-in') %>
+<% } else { %>
+<%- include('my-drive') %>
+<% } %>
+
+<!-- if not signed in render sign in form -->
+<!-- else folders page -->
