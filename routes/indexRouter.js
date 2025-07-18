@@ -37,7 +37,7 @@ indexRouter.post("/add-folder", isAuth, indexController.postFolder);
 
 indexRouter.get("/:folderId", isAuth, indexController.getFolder);
 
-indexRouter.get("/:fileId/install", isAuth, indexController.getInstallFile);
+indexRouter.get("/:fileId/install", indexController.getInstallFile);
 
 indexRouter.post(
   "/delete-folder/:folderId",

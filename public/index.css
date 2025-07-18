@@ -277,7 +277,7 @@ main .my-drive .header form input {
 }
 
 main .my-drive .header form button {
-  width: 10%;
+  min-width: 10%;
   transition: background-color 0.1s ease-out;
 }
 
@@ -627,6 +627,25 @@ main .files-container .submit-btn:hover {
 
   main .folders-container {
     align-self: center;
+  }
+
+  main .my-drive .header {
+    align-items: center;
+  }
+
+  main .my-drive .header form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  main .my-drive .header form button {
+    min-width: 20%;
+  }
+
+  main .my-drive .header form label input {
+    width: 84%;
   }
 }
 
