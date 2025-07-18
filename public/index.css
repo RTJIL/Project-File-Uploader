@@ -180,6 +180,15 @@ main .about-container {
   font-size: 1.4rem;
 }
 
+.form-container .error-list {
+  background-color: #ffe6e6;
+  color: #cc0000;
+  padding: 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  list-style: none;
+}
+
 main .meinfo-container {
   box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.2);
   border-radius: 8px;
@@ -529,6 +538,38 @@ main .files-container .submit-btn:hover {
   color: white;
   transition: color 0.2s ease-out;
   font-size: 1.2rem;
+}
+
+.notfound-container {
+  max-width: 500px;
+}
+
+.notfound-container h1 {
+  font-size: 8rem;
+  margin-bottom: 0.3em;
+  color: #ff4757;
+  text-shadow: 2px 2px 10px #ff6b81;
+}
+
+.notfound-container p {
+  font-size: 1.5rem;
+  margin-bottom: 1.5em;
+  color: #aaa;
+}
+
+.notfound-container a {
+  text-decoration: none;
+  color: #70a1ff;
+  font-weight: bold;
+  border: 2px solid #70a1ff;
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.notfound-container a:hover {
+  background-color: #70a1ff;
+  color: #1a1a1a;
 }
 
 @media (max-width: 600px) {

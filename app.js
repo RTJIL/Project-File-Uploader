@@ -43,9 +43,13 @@ app.use(authInfo);
 //serving index route
 app.use("/", indexRouter);
 
-app.listen(PORT, () => console.log("Server started on port: ", PORT));
+app.use((req, res) => {
+  res.status(404).render('pages/404');
+});
 
 app.use((err, req, res, next) => {
   console.error("💥 Global error caught:", err);
   res.status(500).send("⛔ Server side error");
 });
+
+app.listen(PORT, () => console.log("Server started on port: ", PORT));

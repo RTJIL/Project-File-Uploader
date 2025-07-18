@@ -16,15 +16,24 @@ const findAll = async (modelName) => {
   return res;
 }; //SELECT * FROM user
 
-const findAllWhere = async (modelName, value) => {
+const findAllWhere = async (modelName, value, order) => {
   if (!allowedModels.includes(modelName))
     throw new Error(`Model ${modelName} is not allowed`);
 
   console.log(`🔃Fetching all ${modelName}s from ${modelName} DB`);
 
-  const res = await prisma[modelName].findMany({
-    where: value,
-  });
+  let res; // declare here
+
+  if (order) {
+    res = await prisma[modelName].findMany({
+      where: value,
+      orderBy: order,
+    });
+  } else {
+    res = await prisma[modelName].findMany({
+      where: value,
+    });
+  }
 
   console.log("✅Completed", res);
   console.log("----");

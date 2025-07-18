@@ -1,31 +1,37 @@
 import queries from "../models/queries.js";
 import bcrypt from "bcrypt";
 import passport from "../config/passport.js";
-import path from "node:path";
 import { deleteOldSessions } from "../utils/sessionHelpers/sessionService.js";
 import { formatFileSize, formatDate } from "../utils/formatters.js";
-//
+import { supabase } from "../config/supabase.js";
+import "dotenv/config";
+import axios from "axios";
+
 //sign-in form or folders page rendering at home page conditionally
 const getHomePage = async (req, res) => {
-  if (req.body) console.log("User signed in data: ", req.body);
+  try {
+    if (process.env.NODE_ENV === "development") {
+      if (req.body) console.log("User signed in data:", req.body);
+      if (req.session) console.log("Session data:", req.session);
+      console.log("User passport data req.user:", req.user);
+      console.log("----");
+    }
 
-  if (req.session) console.log("Session data: ", req.session);
-  if (req.user) console.log("User passport data req.user: ", req.user);
-  else console.log("Passport data:", req.user);
+    if (req.isAuthenticated && req.isAuthenticated()) {
+      const { id } = req.user;
+      const folders = await queries.findAllWhere("folder", { userId: id });
+      return res.render("pages/home", { folders });
+    }
 
-  console.log("----");
-
-  if (req.isAuthenticated && req.isAuthenticated()) {
-    const folders = await queries.findAll("folder");
-
-    return res.render("pages/home", { folders });
+    return res.render("pages/home", { folders: [], errors: [] });
+  } catch (error) {
+    console.error("Error fetching home page:", error);
+    return res.status(500).send("Something went wrong.");
   }
-
-  return res.render("pages/home");
 };
 
 const getSignUpForm = (req, res) => {
-  res.render("pages/forms/sign-up");
+  res.render("pages/forms/sign-up", { errors: [] });
 };
 
 const getAboutPage = (req, res) => {
@@ -41,9 +47,13 @@ const getFolder = async (req, res) => {
 
   console.log("folderId: ", folderId);
   try {
-    const files = await queries.findAllWhere("file", {
-      folderId,
-    });
+    const files = await queries.findAllWhere(
+      "file",
+      {
+        folderId,
+      },
+      { uploadTime: "desc" },
+    );
     return res.render("pages/folder", {
       folderId,
       files,
@@ -60,25 +70,38 @@ const getInstallFile = async (req, res) => {
 
   try {
     const file = await queries.findUnique("file", { id });
+    if (!file) return res.status(404).send("File not found");
 
-    if (!file) {
-      return res.status(404).send("File not found");
+    const bucketName = process.env.SUPABASE_BUCKET;
+    let key = file.path;
+    if (file.path.startsWith("http")) {
+      key = file.path.split(`/${bucketName}/`)[1];
     }
 
-    const fullPath = path.resolve(file.path);
+    const { data: signedUrlData, error } = await supabase.storage
+      .from(bucketName)
+      .createSignedUrl(key, 60);
 
-    if (!file) {
-      return res.status(404).send("File not found");
+    if (error) {
+      console.error(error);
+      return res.status(500).send("Failed to get signed URL");
     }
 
-    res.download(fullPath, file.title, (err) => {
-      if (err) {
-        console.error("Download error:", err);
-        return res.status(500).send("Error downloading file");
-      }
+    const response = await axios({
+      url: signedUrlData.signedUrl,
+      method: "GET",
+      responseType: "stream",
     });
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${file.title}"`,
+    );
+    res.setHeader("Content-Type", response.headers["content-type"]);
+
+    response.data.pipe(res);
   } catch (err) {
-    console.error("❌ Get file error:", err);
+    console.error(err);
     res.status(500).send("Server error");
   }
 };
@@ -96,7 +119,12 @@ const postSignUp = async (req, res) => {
   try {
     const isExist = await queries.findUnique("user", { username });
 
-    if (isExist) return res.status(409).send("Username already taken");
+    if (isExist) {
+      return res.status(409).render("pages/forms/sign-up", {
+        errors: [{ msg: "Username already taken" }],
+        oldInput: req.body,
+      });
+    }
 
     console.log("🔃Posting user to DB");
 
@@ -109,6 +137,10 @@ const postSignUp = async (req, res) => {
     res.redirect("/");
   } catch (err) {
     console.error("❌ Sign up error:", err);
+    res.status(500).render("pages/forms/sign-up", {
+      errors: [{ msg: "Something went wrong, please try again." }],
+      oldInput: req.body,
+    });
   }
 };
 
@@ -127,7 +159,13 @@ const postSignOut = (req, res, next) => {
 const postSignIn = (req, res, next) => {
   passport.authenticate("local", async (err, user, info) => {
     if (err) return next(err);
-    if (!user) return res.redirect("/");
+
+    if (!user) {
+      return res.status(401).render("pages/forms/sign-in", {
+        errors: [{ msg: info.message || "Incorrect username or password" }],
+        oldInput: req.body,
+      });
+    }
 
     try {
       await deleteOldSessions(user.id);
@@ -154,7 +192,7 @@ const postFolder = async (req, res) => {
   }
 };
 
-const postDeleteFolder = async (req, res) => {
+/* const postDeleteFolder = async (req, res) => {
   const id = Number(req.params.folderId);
 
   if (isNaN(id)) {
@@ -167,23 +205,71 @@ const postDeleteFolder = async (req, res) => {
   } catch (err) {
     console.error("❌ Delete folder error:", err);
   }
+}; */
+
+const postDeleteFolder = async (req, res) => {
+  const folderId = Number(req.params.folderId);
+
+  if (isNaN(folderId)) {
+    return res.status(400).send("Invalid folder ID");
+  }
+
+  try {
+    const files = await queries.findAllWhere("file", { folderId });
+
+    if (files.length > 0) {
+      const fileKeys = files.map((file) => file.path);
+
+      const { error: supaError } = await supabase.storage
+        .from(process.env.SUPABASE_BUCKET)
+        .remove(fileKeys);
+
+      if (supaError) {
+        console.error("Supabase delete error:", supaError);
+        return res.status(500).send("Failed to delete files from storage");
+      }
+    }
+
+    await queries.deleteSome("folder", { id: folderId });
+
+    res.redirect("/");
+  } catch (err) {
+    console.error("❌ Delete folder error:", err);
+    res.status(500).send("Server error");
+  }
 };
 
 const postDeleteFile = async (req, res) => {
   const id = Number(req.params.fileId);
   const folderId = req.params.folderId;
 
-  console.log(id);
-
   if (isNaN(id)) {
-    return res.status(400).send("Invalid folder ID");
+    return res.status(400).send("Invalid file ID");
   }
 
   try {
+    const fileRecord = await queries.findUnique("file", { id });
+
+    if (!fileRecord) {
+      return res.status(404).send("File not found");
+    }
+
+    // Remove file from Supa
+    const { error: supaError } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .remove([fileRecord.path]);
+
+    if (supaError) {
+      console.error("Supabase delete error:", supaError);
+      return res.status(500).send("Failed to delete file from storage");
+    }
+
     await queries.deleteSome("file", { id });
+
     return res.redirect(`/${folderId}`);
   } catch (err) {
-    console.error("❌ Delete folder error:", err);
+    console.error("❌ Delete file error:", err);
+    res.status(500).send("Server error");
   }
 };
 
@@ -200,21 +286,44 @@ const postEditFolder = async (req, res) => {
 };
 
 const postFile = async (req, res) => {
-  console.log("File: ", req.file);
-
-  const { originalname, size, path } = req.file;
-  const id = Number(req.params.folderId);
-
-  console.log("File data: ", req.file);
-
-  // const timeCreated = new Date();
-  // const fortmattedTime = timeCreated.toLocaleDateString();
-
   try {
-    await queries.postFile(originalname, size, id, path);
-    return res.redirect(`/${id}`);
+    const file = req.file; // multer
+    const fileName = `${Date.now()}-${file.originalname}`;
+    const folderId = Number(req.params.folderId);
+
+    const { data, error } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true,
+      });
+
+    if (error) {
+      return res
+        .status(500)
+        .json({ error: "Upload to Supabase failed", details: error.message });
+    }
+
+    const { data: urlData } = supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .getPublicUrl(fileName);
+
+    const fileUrl = urlData.publicUrl;
+
+    const savedFile = await queries.postFile(
+      file.originalname,
+      file.size,
+      folderId,
+      fileName,
+    );
+
+    res.redirect(`/${folderId}`);
   } catch (err) {
-    console.error("❌ Post folder error:", err);
+    console.error(err);
+    res.status(500).json({
+      error: "Server error",
+      details: err.message,
+    });
   }
 };
 
