@@ -1,6 +1,7 @@
 <section class="files-container">
   <h1 style="margin-bottom: 10px">Files</h1>
 
+  <% if (locals.isShared !== undefined && !locals.isShared) { %>
   <form
     id="uploadForm"
     action="/<%= folderId %>/add-file"
@@ -16,6 +17,7 @@
 
     <button type="submit" class="submit-btn">Submit file</button>
   </form>
+  <% } %>
 
   <div class="data-container">
     <!-- Header row -->
@@ -24,7 +26,9 @@
       <p>Size</p>
       <p>Upload Time</p>
       <p>Download</p>
+      <% if (locals.isShared !== undefined && !locals.isShared) { %>
       <p>Remove</p>
+      <% } %>
     </div>
 
     <% files.forEach(file => { %>
@@ -33,11 +37,11 @@
       <p><%= formatFileSize(file.size) %></p>
       <p><%= formatDate(file.uploadTime) %></p>
       <a href="/<%= file.id %>/install">⬇️ Download</a>
-      <!-- <a> -->
+      <% if (locals.isShared !== undefined && !locals.isShared) { %>
       <form action="/<%= folderId %>/<%= file.id %>/delete" method="POST">
         <button type="submit">🪣Remove</button>
       </form>
-      <!-- </a> -->
+      <% } %>
     </div>
     <% }); %>
   </div>

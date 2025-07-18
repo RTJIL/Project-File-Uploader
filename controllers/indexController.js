@@ -5,6 +5,7 @@ import { deleteOldSessions } from "../utils/sessionHelpers/sessionService.js";
 import { formatFileSize, formatDate } from "../utils/formatters.js";
 import { supabase } from "../config/supabase.js";
 import "dotenv/config";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
 //sign-in form or folders page rendering at home page conditionally
@@ -59,6 +60,7 @@ const getFolder = async (req, res) => {
       files,
       formatFileSize,
       formatDate,
+      isShared: false,
     });
   } catch (err) {
     console.error("❌ Get files error:", err);
@@ -104,6 +106,55 @@ const getInstallFile = async (req, res) => {
     console.error(err);
     res.status(500).send("Server error");
   }
+};
+
+const getSharedFolder = async (req, res) => {
+  const token = req.params.folderId;
+
+  const folder = await queries.findUnique("folder", { sharedToken: token });
+
+  if (
+    !folder ||
+    (folder.shareExpiry && new Date(folder.shareExpiry) < new Date())
+  ) {
+    return res.status(404).send("This link is invalid or expired");
+  }
+
+  const files = await queries.findAllWhere(
+    "file",
+    { folderId: folder.id },
+    { uploadTime: "desc" },
+  );
+
+  res.render("pages/folder", {
+    folderId: folder.id,
+    files,
+    formatFileSize,
+    formatDate,
+    isShared: true, 
+  });
+};
+
+const postShareFolder = async (req, res) => {
+  const folderId = Number(req.params.folderId);
+  if (isNaN(folderId)) return res.status(400).send("Invalid folder ID");
+
+  const token = uuidv4();
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+  await queries.updateSome(
+    "folder",
+    { id: folderId },
+    {
+      sharedToken: token,
+      shareExpiry: expiresAt,
+    },
+  );
+
+  res.json({
+    shareUrl: `${process.env.BASE_URL}/share/${token}`,
+    expiresAt,
+  });
 };
 
 const postSignUp = async (req, res) => {
@@ -191,21 +242,6 @@ const postFolder = async (req, res) => {
     console.error("❌ Post folder error:", err);
   }
 };
-
-/* const postDeleteFolder = async (req, res) => {
-  const id = Number(req.params.folderId);
-
-  if (isNaN(id)) {
-    return res.status(400).send("Invalid folder ID");
-  }
-
-  try {
-    await queries.deleteSome("folder", { id });
-    return res.redirect("/");
-  } catch (err) {
-    console.error("❌ Delete folder error:", err);
-  }
-}; */
 
 const postDeleteFolder = async (req, res) => {
   const folderId = Number(req.params.folderId);
@@ -333,6 +369,8 @@ export default {
   getAboutPage,
   getFolder,
   getInstallFile,
+  getSharedFolder,
+  postShareFolder,
   postSignUp,
   postSignOut,
   postSignIn,

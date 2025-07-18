@@ -21,7 +21,11 @@
     <div class="folder">
       <!-- Folder link area -->
       <a href="/<%= folder.id %>" class="folder-link">
-        <img src="folder.png" alt="folder-ico" style="width: 24px; user-select: none;" />
+        <img
+          src="folder.png"
+          alt="folder-ico"
+          style="width: 24px; user-select: none"
+        />
         <h4
           style="margin: 10px"
           class="folder-title"
@@ -40,7 +44,7 @@
             src="dots.png"
             alt="drop-ico"
             class="drop-ico"
-            style="width: 24px; cursor: pointer; user-select: none;"
+            style="width: 24px; cursor: pointer; user-select: none"
           />
         </div>
 
@@ -55,10 +59,10 @@
               <div class="emoji">🗑</div>
             </button>
           </form>
-          <a href="/share/<%= folder.id %>">
+          <button class="share-btn" data-folder-id="<%= folder.id %>">
             <div class="txt">Share</div>
             <div class="emoji">🔗</div>
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -67,3 +71,4 @@
 </div>
 <script src="/js/dropdown.js"></script>
 <script src="/js/edit.js"></script>
+<script src="/js/share.js"></script>

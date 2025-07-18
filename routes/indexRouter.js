@@ -47,6 +47,14 @@ indexRouter.post(
 
 indexRouter.post("/edit/:folderId", isAuth, indexController.postEditFolder);
 
+indexRouter.get("/share/:folderId", indexController.getSharedFolder);
+
+indexRouter.post(
+  "/share/:folderId/share",
+  isAuth,
+  indexController.postShareFolder,
+);
+
 indexRouter.post(
   "/:folderId/add-file",
   isAuth,

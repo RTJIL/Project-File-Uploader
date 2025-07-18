@@ -21,11 +21,13 @@ model User {
 }
 
 model Folder {
-  id     Int    @id @default(autoincrement())
-  title  String
-  userId Int
-  user   User   @relation(fields: [userId], references: [id])
-  files  File[]
+  id          Int       @id @default(autoincrement())
+  title       String
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  files       File[]
+  sharedToken String?   @unique
+  shareExpiry DateTime?
 }
 
 model File {
