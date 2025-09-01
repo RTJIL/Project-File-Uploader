@@ -1,2 +1,2 @@
 # 🔴 Live
-s
+https://project-file-uploader-production-e515.up.railway.app/
